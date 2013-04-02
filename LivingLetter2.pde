@@ -57,8 +57,15 @@ class LivingLetter2{
     int total = points.size();
     //
     for(RPoint p:points){
-      RPoint rp = new RPoint();
-      point(p.x, p.y);
+      RPoint p0 = new RPoint();
+      for(RPoint pn:points){
+        if(p!=pn){
+          if(p.dist(pn)<p.dist(p0)){
+            p0 = pn;
+          }
+        }
+      }
+      line(p.x, p.y,p0.x,p0.y);
       i++;
     }
     if(keyPressed){
