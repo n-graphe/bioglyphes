@@ -18,12 +18,17 @@ class LivingLetter2{
   }
   
   void Update(){
+    strokeWeight(.5);
     randomSeed(0);
     int i=0;
     int total = points.length;
     for(RPoint p:points){
       RPoint rp = new RPoint();
-      rp = points[((int)pow(i,1.05))%total];
+      rp = points[((int)pow(i,1.01))%total];
+      while(rp.dist(p)>50){
+        i++;
+        rp = points[((int)pow(i,1.01))%total];
+      };
       line(p.x,p.y,rp.x,rp.y);
       i++;
     }
