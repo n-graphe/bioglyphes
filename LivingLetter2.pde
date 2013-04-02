@@ -23,24 +23,13 @@ class LivingLetter2{
     int total = points.length;
     for(RPoint p:points){
       RPoint rp = new RPoint();
-      //rp = points[((int)pow(i,1.03))%total];
-      switch((fc/24)%4){
-        case 2:
-        rp = points[(i+total/3)%total];
-        break;
-        case 1:
-        rp = points[(i+total/4)%total];
-        break;
-        case 3:
-        rp = points[floor(random(total))];
-        case 0:
-        rp = points[floor(random(total))];
-        break;
-      }
+      rp = points[((int)pow(i,1.05))%total];
       line(p.x,p.y,rp.x,rp.y);
       i++;
     }
-    //saveFrame("frame"+(fc/24)+".jpg");
+    if(keyPressed){
+      saveFrame("currentFrame.jpg");
+    }
   }
   
 }
