@@ -57,19 +57,21 @@ void draw() {
   
   noFill();
   beginShape();
-
-  //*
-  for(LivingLetter letter:livingLetters){
-    for(int i=0; i<15; i++){
-      letter.Update();
-    }
-  }
-  /*/ /*
-  for(int i=0; i<5000; i++){
-      toShape.Update();
-  }// */
   
-  //endShape();
+  /*
+  for(LivingLetter letter:livingLetters){
+    //for(int i=0; i<15; i++){
+      letter.Update();
+    //}
+  }
+  */
+  println(frameCount);
+  //for(int i=0; i<3; i++){
+      toShape.Update();
+  //}// */
+  
+  //
+  endShape();
   
 }
 

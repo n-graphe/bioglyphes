@@ -21,42 +21,54 @@ class LivingLetter{
     reading = new RPoint(baricenter);
     //
     int ShapeA = 120;
-    int TOTAL = 100;
-    for(int i = 0; i<TOTAL; i++){
+    float TOTAL = 100;
+    float INTERVAL = 20;
+    TOTAL = s.width*s.height/pow(INTERVAL,2);
+    for(int i = 1; i<TOTAL; i++){
+      RPoint rp = new RPoint((i*INTERVAL)%s.width,s.height*i/TOTAL);
+      if(s.contains(rp)){
+        rdmPoints.add(rp);
+      }
+      /*
       RPoint rp = new RPoint(baricenter);
       rp.x += sin(i/TWO_PI)*ShapeA*.5*i/TOTAL;
       rp.y +=  cos(i/TWO_PI)*ShapeA*i/TOTAL;
       if(!s.contains(rp)){
         rdmPoints.add(rp);
         rdmVelocity.add(new RPoint());
-      }
+      }*/
     }
     //
   }
   float speed = random(10);
   float speed2 = random(20);
   void Update(){
-  beginShape();
+//  beginShape();
     
     for(RPoint rp: rdmPoints){
-      RPoint cvel = new RPoint();
+      /*RPoint cvel = new RPoint();
       for(RPoint rpp: rdmPoints){
         RPoint diff = new RPoint(rp.x-rpp.x,rp.y-rpp.y);
         cvel.add(diff);
       }
       cvel.x/=rdmPoints.size();
-      cvel.y/=rdmPoints.size();
+      cvel.y/=rdmPoints.size();*/
       
       RPoint diff = new RPoint(random(-1,1),random(-1,1));
       rp.add(diff);
-      while(s.contains(rp)){
-          rp.sub(diff);
+//*
+      int tryCount = 0;
+      while(!s.contains(rp)){
+         rp.sub(diff);
          diff = new RPoint(random(-1,1),random(-1,1));
-          rp.add(diff);
+         rp.add(diff);
       }
+//*/      
+      //if(!s.contains(rp)){
         point(rp.x,rp.y);
+      //} 
     }
-  endShape();
+//  endShape();
     //point(bar.x,bar.y);
     
     
