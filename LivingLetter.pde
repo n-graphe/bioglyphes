@@ -5,6 +5,8 @@ class LivingLetter{
   RPoint baricenter;
   RPoint reading;
   RPoint rVelocity = new RPoint();
+  ArrayList<RPoint> rdmPoints = new ArrayList<RPoint>();
+  ArrayList<RPoint> rdmVelocity = new ArrayList<RPoint>();
     
   LivingLetter(RShape _s){
     s = _s;
@@ -13,32 +15,51 @@ class LivingLetter{
     for(RPoint p: points){
       baricenter.add(p);
     }
+    //
     baricenter.x/=points.length;
     baricenter.y/=points.length;
     reading = new RPoint(baricenter);
+    //
+    int ShapeA = 120;
+    int TOTAL = 100;
+    for(int i = 0; i<TOTAL; i++){
+      RPoint rp = new RPoint(baricenter);
+      rp.x += sin(i/TWO_PI)*ShapeA*.5*i/TOTAL;
+      rp.y +=  cos(i/TWO_PI)*ShapeA*i/TOTAL;
+      if(!s.contains(rp)){
+        rdmPoints.add(rp);
+        rdmVelocity.add(new RPoint());
+      }
+    }
+    //
   }
   float speed = random(10);
   float speed2 = random(20);
   void Update(){
-    speed+=.2;
-    speed2+=.8;
-    //if(random(1)<.01){speed+=60;}
-    RPoint pTarget = points[floor(speed)%points.length];
-    RPoint pTarget2 = points[floor(speed2)%points.length];
+  beginShape();
     
-    RPoint bar = new RPoint(pTarget);
-    bar.add(pTarget2);
-    bar.x/=2;
-    bar.y/=2;
+    for(RPoint rp: rdmPoints){
+      RPoint cvel = new RPoint();
+      for(RPoint rpp: rdmPoints){
+        RPoint diff = new RPoint(rp.x-rpp.x,rp.y-rpp.y);
+        cvel.add(diff);
+      }
+      cvel.x/=rdmPoints.size();
+      cvel.y/=rdmPoints.size();
+      
+      RPoint diff = new RPoint(random(-1,1),random(-1,1));
+      rp.add(diff);
+      while(s.contains(rp)){
+          rp.sub(diff);
+         diff = new RPoint(random(-1,1),random(-1,1));
+          rp.add(diff);
+      }
+        point(rp.x,rp.y);
+    }
+  endShape();
+    //point(bar.x,bar.y);
     
-    rVelocity = new RPoint(pTarget);
-    rVelocity.sub(reading);
-    rVelocity.x *= .1;
-    rVelocity.y *= .1;
     
-    reading.add(rVelocity);
-    //point(reading.x,reading.y);
-    point(bar.x,bar.y);
     
     /*for(RPoint p: points){
       float d = baricenter.dist(p)/10+4;

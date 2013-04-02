@@ -51,27 +51,31 @@ RPoint lastPoint = new RPoint();
 void draw() {
   
   fc = frameCount;
+  //translate(-300,-200);
+  //scale(2);
   translate(100,100);
   
   noFill();
   beginShape();
 
+  //*
   for(LivingLetter letter:livingLetters){
-    for(int i=0; i<500; i++){
+    for(int i=0; i<15; i++){
       letter.Update();
     }
   }
-  /*for(int i=0; i<5000; i++){
+  /*/ /*
+  for(int i=0; i<5000; i++){
       toShape.Update();
-  }*/
+  }// */
   
-  endShape();
+  //endShape();
   
 }
+
 
 void keyPressed(){
   if(key=='s'){
     saveFrame("preview.png");
   }
 }
-
