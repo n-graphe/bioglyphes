@@ -21,14 +21,23 @@ class LivingLetter{
     reading = new RPoint(baricenter);
     //
     int ShapeA = 120;
-    float TOTAL = 100;
+    float TOTAL = 300;
     float INTERVAL = 30;
     TOTAL = s.width*s.height/pow(INTERVAL,2);
     for(int i = 1; i<TOTAL; i++){
-      RPoint rp = new RPoint((i*INTERVAL)%s.width,s.height*i/TOTAL);
+      /*RPoint rp = new RPoint((i*INTERVAL)%s.width,s.height*i/TOTAL);
       if(!s.contains(rp)){
         rdmPoints.add(rp);
+      }*/
+      
+      RPoint rp = new RPoint(random(-20,740),random(20,200));
+      //rp.x += sin(i/TWO_PI)*400*i/TOTAL;
+      //rp.y +=  cos(i/TWO_PI)*100*i/TOTAL;
+      if(!s.contains(rp)){
+        rdmPoints.add(rp);
+        rdmVelocity.add(new RPoint());
       }
+      
       /*
       RPoint rp = new RPoint(baricenter);
       rp.x += sin(i/TWO_PI)*ShapeA*.5*i/TOTAL;
@@ -56,9 +65,10 @@ class LivingLetter{
       
       RPoint diff = new RPoint(random(-1,1),random(-1,1));
       rp.add(diff);
+//
 //*
       int tryCount = 0;
-      while(s.contains(rp)){
+      while(s.contains(rp)&&(random(1)>.1)){
          rp.sub(diff);
          diff = new RPoint(random(-1,1),random(-1,1));
          rp.add(diff);
