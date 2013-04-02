@@ -37,6 +37,7 @@ void draw() {
   beginShape();
   
   //*
+    randomSeed(0);
   for(LivingLetter2 letter:livingLetters){
     //for(int i=0; i<15; i++){
       letter.Update();
