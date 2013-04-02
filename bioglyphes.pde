@@ -65,10 +65,10 @@ void draw() {
     //}
   }
   */
-  println(frameCount);
-  //for(int i=0; i<3; i++){
+  //println(frameCount);
+  for(int i=0; i<10; i++){
       toShape.Update();
-  //}// */
+   }// */
   
   //
   endShape();

@@ -22,11 +22,11 @@ class LivingLetter{
     //
     int ShapeA = 120;
     float TOTAL = 100;
-    float INTERVAL = 20;
+    float INTERVAL = 30;
     TOTAL = s.width*s.height/pow(INTERVAL,2);
     for(int i = 1; i<TOTAL; i++){
       RPoint rp = new RPoint((i*INTERVAL)%s.width,s.height*i/TOTAL);
-      if(s.contains(rp)){
+      if(!s.contains(rp)){
         rdmPoints.add(rp);
       }
       /*
@@ -58,7 +58,7 @@ class LivingLetter{
       rp.add(diff);
 //*
       int tryCount = 0;
-      while(!s.contains(rp)){
+      while(s.contains(rp)){
          rp.sub(diff);
          diff = new RPoint(random(-1,1),random(-1,1));
          rp.add(diff);
