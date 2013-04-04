@@ -40,7 +40,7 @@ class LivingLetter2{
   void UseInsidePoints(){
     println(WIDTH*HEIGHT);
     points = new ArrayList<RPoint>();
-    for(int i=0; i<WIDTH*HEIGHT/400; i++){
+    for(int i=0; i<WIDTH*HEIGHT/1000; i++){
       RPoint randomPoint = new RPoint(MIN_X+random(WIDTH),MIN_Y+random(HEIGHT));
       if(s.contains(randomPoint)){
         points.add(randomPoint);
@@ -52,20 +52,31 @@ class LivingLetter2{
   }
   
   void Update(){
-    strokeWeight(2);
+    strokeWeight(.5);
     int i=0;
     int total = points.size();
     //
     for(RPoint p:points){
-      RPoint p0 = new RPoint();
+      RPoint p0 = new RPoint(points.get(0));
+      RPoint p1 = new RPoint(points.get(0));
+      RPoint p2 = new RPoint(points.get(0));
+      p0 = p1 = p2 = new RPoint(300,-50);
       for(RPoint pn:points){
         if(p!=pn){
           if(p.dist(pn)<p.dist(p0)){
-            p0 = pn;
+            //p2 = new RPoint(p1);
+            p1 = new RPoint(p0);
+            p0 = new RPoint(pn);
           }
         }
       }
+      stroke(0);
+      strokeWeight(0.5);
       line(p.x, p.y,p0.x,p0.y);
+      stroke(0,0,255);
+      //strokeWeight(1);
+      line(p.x, p.y,p1.x,p1.y);
+      //line(p.x, p.y,p2.x,p2.y);
       i++;
     }
     if(keyPressed){
