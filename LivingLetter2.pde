@@ -81,16 +81,21 @@ class LivingLetter2{
         }
         
       }
+      rectMode(CORNERS);
       stroke(0,200);
       strokeWeight(0.5);
-      line(p.x, p.y,p0.x,p0.y);
+      
+       rect(p.x,p.y,p0.x,p0.y);
+     //line(p.x, p.y,p0.x,p0.y);
       stroke(0,0,255,200);
+      rect(p0.x,p0.y,p1.x,p1.y);
       //strokeWeight(1);
-      line(p.x, p.y,p1.x,p1.y);
+      //line(p.x, p.y,p1.x,p1.y);
 
       stroke(255,0,0,160);
-      line(p.x, p.y,p2.x,p2.y);
-      strokeWeight(4);
+       rect(p0.x,p0.y,p2.x,p2.y);
+     //line(p.x, p.y,p2.x,p2.y);
+      strokeWeight(6);
       //point(p.x,p.y);
       i++;
     }
