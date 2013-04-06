@@ -1,3 +1,4 @@
+import processing.pdf.*;
 import geomerative.*;
 
 RShape archi;
@@ -5,58 +6,58 @@ RShape archi;
 int fc = 0;
 
 int w = 1000;
-int h = 500;
-ArrayList<LivingLetter2> livingLetters = new ArrayList<LivingLetter2>();
-LivingLetter2 livingShape;
+int h = 600;
+ArrayList<LivingLetter> livingLetters = new ArrayList<LivingLetter>();
+LivingLetter livingShape;
 
 void setup() {
   size(w, h);
   RG.init(this);
   background(255);
-  archi = RG.loadShape("archi.svg");
+  noSmooth();
+  archi = RG.loadShape("ArchiLab.svg");
   //
   //RG.setPolygonizer(RG.UNIFORMLENGTH);
   //RG.setPolygonizerLength(10);
   //
+  //colorMode(HSB);
   randomSeed(200);
   for(RShape shape:archi.children){
-    livingLetters.add(new LivingLetter2(shape));
+    livingLetters.add(new LivingLetter(shape));
   }
-  livingShape = new LivingLetter2(archi);
+  println(archi.countChildren());
+  livingShape = new LivingLetter(archi);
 }
 
 RPoint lastPoint = new RPoint();
 void draw() {
-  background(255);
-  fc = frameCount;
-  //translate(-300,-200);
-  //scale(2);
-  translate(100,100);
-  
+  //background(255);
   noFill();
+  fc = frameCount;
+  /*
+  translate(-width*.5,-height*.5);
+  scale(2);
+  */
+  noFill();
+  
+  
   beginShape();
   
-  //*
-    randomSeed(0);
-  for(LivingLetter2 letter:livingLetters){
+  /*
+  //randomSeed(0);
+  for(LivingLetter letter:livingLetters){
     //for(int i=0; i<15; i++){
       letter.Update();
     //}
   }
   //*/
-  /*//println(frameCount);
-  for(int i=0; i<10; i++){
-      toShape.Update();
+  //println(frameCount);
+  for(int i=0; i<1; i++){
+      livingShape.Update();
    }// */
   
   //
   endShape();
-  
+  //noLoop();
 }
 
-
-void keyPressed(){
-  if(key=='s'){
-    saveFrame("preview.png");
-  }
-}

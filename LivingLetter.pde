@@ -1,93 +1,94 @@
+import java.util.Arrays;
+
 class LivingLetter{
-  
   RShape s;
-  RPoint[] points;
+  ArrayList<RPoint> points = new ArrayList<RPoint>();
   RPoint baricenter;
-  RPoint reading;
-  RPoint rVelocity = new RPoint();
-  ArrayList<RPoint> rdmPoints = new ArrayList<RPoint>();
-  ArrayList<RPoint> rdmVelocity = new ArrayList<RPoint>();
-    
+  int MIN_X = 99999;
+  int MAX_X = -99999;
+  int MIN_Y = 99999;
+  int MAX_Y = -99999;
+  int WIDTH = 0;
+  int HEIGHT = 0;
   LivingLetter(RShape _s){
     s = _s;
-    points = s.getPoints();
+    RG.setPolygonizer(RG.UNIFORMLENGTH);
+    RG.setPolygonizerLength(10);
+    points.addAll(Arrays.asList(s.getPoints()));
+    SetupBBox();
+    //UseInsidePoints();
+    // 
+  }
+  
+  void SetupBBox(){
     baricenter = new RPoint();
+    //
     for(RPoint p: points){
+      //
+      MAX_X = (int)(p.x>MAX_X?p.x:MAX_X);
+      MAX_Y = (int)(p.y>MAX_Y?p.y:MAX_Y);
+      MIN_X = (int)(p.x<MIN_X?p.x:MIN_X);
+      MIN_Y = (int)(p.y<MIN_Y?p.y:MIN_Y);
+      //
       baricenter.add(p);
     }
     //
-    baricenter.x/=points.length;
-    baricenter.y/=points.length;
-    reading = new RPoint(baricenter);
+    WIDTH = MAX_X-MIN_X;
+    HEIGHT = MAX_Y-MIN_Y;
     //
-    int ShapeA = 120;
-    float TOTAL = 300;
-    float INTERVAL = 30;
-    TOTAL = s.width*s.height/pow(INTERVAL,2);
-    for(int i = 1; i<TOTAL; i++){
-      /*RPoint rp = new RPoint((i*INTERVAL)%s.width,s.height*i/TOTAL);
-      if(!s.contains(rp)){
-        rdmPoints.add(rp);
-      }*/
-      
-      RPoint rp = new RPoint(random(-20,740),random(20,200));
-      //rp.x += sin(i/TWO_PI)*400*i/TOTAL;
-      //rp.y +=  cos(i/TWO_PI)*100*i/TOTAL;
-      if(!s.contains(rp)){
-        rdmPoints.add(rp);
-        rdmVelocity.add(new RPoint());
-      }
-      
-      /*
-      RPoint rp = new RPoint(baricenter);
-      rp.x += sin(i/TWO_PI)*ShapeA*.5*i/TOTAL;
-      rp.y +=  cos(i/TWO_PI)*ShapeA*i/TOTAL;
-      if(!s.contains(rp)){
-        rdmPoints.add(rp);
-        rdmVelocity.add(new RPoint());
-      }*/
-    }
-    //
+    baricenter.scale((float)1/points.size());
   }
-  float speed = random(10);
-  float speed2 = random(20);
-  void Update(){
-//  beginShape();
-    
-    for(RPoint rp: rdmPoints){
-      /*RPoint cvel = new RPoint();
-      for(RPoint rpp: rdmPoints){
-        RPoint diff = new RPoint(rp.x-rpp.x,rp.y-rpp.y);
-        cvel.add(diff);
+  
+  void UseInsidePoints(){
+    points = new ArrayList<RPoint>();
+    for(int i=0; i<WIDTH*HEIGHT/20; i++){
+      RPoint randomPoint = new RPoint(MIN_X+random(WIDTH),MIN_Y+random(HEIGHT));
+      if(s.contains(randomPoint)){
+        points.add(randomPoint);
       }
-      cvel.x/=rdmPoints.size();
-      cvel.y/=rdmPoints.size();*/
-      
-      RPoint diff = new RPoint(random(-1,1),random(-1,1));
-      rp.add(diff);
-//
-//*
-      int tryCount = 0;
-      while(s.contains(rp)&&(random(1)>.1)){
-         rp.sub(diff);
-         diff = new RPoint(random(-1,1),random(-1,1));
-         rp.add(diff);
-      }
-//*/      
-      //if(!s.contains(rp)){
-        point(rp.x,rp.y);
-      //} 
     }
-//  endShape();
-    //point(bar.x,bar.y);
+    //RG.setPolygonizer(RG.UNIFORMLENGTH);
+    //RG.setPolygonizerLength(min(100,10+mouseY/10));
+    points.addAll(Arrays.asList(s.getPoints()));
+  }
+  
+  void Update(){
+   
+    if(keyPressed){
+          beginRecord(PDF, "record-"+key+".pdf");
+           noFill();
+    }
+    RPoint[] pts = s.getPoints();
+    int totalPts = pts.length;
+    RPoint[] tgs = s.getTangents();
+    int totalTgs = tgs.length;
+    //
+    int total = 30+mouseX;
+    for(int i=0; i<total; i++){
+    stroke(0,10);
+
+     RPoint p = s.getPoint((float)i/total);
+      RPoint t = s.getTangent((float)i/total);
+      t.scale(10);
+
+     pushMatrix();
+     translate(p.x,p.y);
+      line(0,0,t.x,t.y);
+      //point(t.x,t.y);
+      popMatrix();  
+    }
     
     
+
     
-    /*for(RPoint p: points){
-      float d = baricenter.dist(p)/10+4;
-      point(p.x+sin(PI*(i+frameCount)/360)*d,p.y+cos(PI*(i+frameCount)/360)*d);
-      i++;
-    }*/
+    
+    if(keyPressed){
+      endRecord();
+      saveFrame("currentFrame.jpg");
+    }
+    if(mousePressed){
+      saveFrame("currentFrame"+mouseX+"_"+mouseY+".jpg");
+    }
   }
   
 }
