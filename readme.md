@@ -23,8 +23,6 @@ L’algorithme a été développé  dans l’environnement [Processing](http://p
 
 ## Aperçu
 
-version naturarchi_3
-
 ![image](preview.png)
 
 ## Prérequis
