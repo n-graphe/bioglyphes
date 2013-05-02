@@ -1,63 +1,60 @@
+//
 import processing.pdf.*;
 import geomerative.*;
+import org.apache.batik.svggen.font.table.*;
+import org.apache.batik.svggen.font.*;
 
-RShape archi;
 
-int fc = 0;
+ArrayList<Box> boxes;
+//
+String title = "archilab";
+RShape typo;
 
-int w = 1000;
-int h = 600;
-ArrayList<LivingLetter> livingLetters = new ArrayList<LivingLetter>();
-LivingLetter livingShape;
-
-void setup() {
-  size(w, h);
-  RG.init(this);
+void setup(){
+  size(900,500);
   background(255);
-  noSmooth();
-  archi = RG.loadShape("ArchiLab.svg");
+  SetupTypo();
+  SetupBox2D();
+ // frameRate(3);
+  //noSmooth();
+  noStroke();
+  boxes = new ArrayList<Box>();
   //
-  //RG.setPolygonizer(RG.UNIFORMLENGTH);
-  //RG.setPolygonizerLength(10);
-  //
-  //colorMode(HSB);
-  randomSeed(200);
-  for(RShape shape:archi.children){
-    livingLetters.add(new LivingLetter(shape));
-  }
-  println(archi.countChildren());
-  livingShape = new LivingLetter(archi);
 }
-
-RPoint lastPoint = new RPoint();
-void draw() {
-  //background(255);
-  noFill();
-  fc = frameCount;
-  /*
-  translate(-width*.5,-height*.5);
-  scale(2);
-  */
-  noFill();
-  
-  
-  beginShape();
-  
-  /*
-  //randomSeed(0);
-  for(LivingLetter letter:livingLetters){
-    //for(int i=0; i<15; i++){
-      letter.Update();
-    //}
-  }
-  //*/
-  //println(frameCount);
-  for(int i=0; i<1; i++){
-      livingShape.Update();
-   }// */
-  
-  //
-  endShape();
-  //noLoop();
+void SetupTypo(){
+  RG.init(this);
+  typo = RG.getText(title,"heimatsansregular.ttf",200,CENTER);
+  typo.translate(width/2,height/2+60);
 }
+void draw(){
+    // Boxes fall from the top every so often
+  // We must always step through time!
+ // background(255);
+  box2d.step();
 
+  fill(0,100);
+  if (random(1) < 0.3 && boxes.size()<400) {
+    Box p = new Box(random(0,width),random(200,300));
+    boxes.add(p);
+  }
+  
+    // Display all the boxes
+  for (Box b: boxes) {
+    b.display();
+  }
+  fill(0);
+  //typo.draw();
+
+  // Boxes that leave the screen, we delete them
+  // (note they have to be deleted from both the box2d world and our list
+  for (int i = boxes.size()-1; i >= 0; i--) {
+    Box b = boxes.get(i);
+    if (b.done()) {
+      boxes.remove(i);
+    }
+  }
+  
+}
+void keyPressed(){
+  saveFrame("preview.png");
+}
