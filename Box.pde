@@ -41,6 +41,9 @@ class Box {
     if( count>2 && linVel.x==0 && linVel.y==0){
       return true;
     }
+    if(count>500){
+      return true;
+    }
     return false;
   }
 
@@ -57,10 +60,10 @@ class Box {
     rotate(-a);
     //fill(175);
     //stroke(0);
-    //if(!typo.contains(pos.x, pos.y)){
+   if(!typo.contains(pos.x, pos.y)){
       //ellipse(0, 0, w, h);
       trajectoire.add(new RPoint(pos.x, pos.y));
-    //}
+    }
     popMatrix();
   }
 
