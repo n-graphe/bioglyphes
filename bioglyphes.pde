@@ -17,7 +17,8 @@ void setup(){
   SetupBox2D();
  // frameRate(3);
   //noSmooth();
-  noStroke();
+  //noStroke();
+  noFill();
   boxes = new ArrayList<Box>();
   //
 }
@@ -27,19 +28,25 @@ void SetupTypo(){
   typo.translate(width/2,height/2+60);
 }
 void draw(){
-    // Boxes fall from the top every so often
+  
+  for(int i=0; i<100; i++){
+    step();
+  }
+  
+}
+void step(){
+      // Boxes fall from the top every so often
   // We must always step through time!
  // background(255);
+  float gravityPow = 60;
+  float speedRotation = 30;
+  box2d.setGravity(gravityPow*sin(frameCount/speedRotation), gravityPow*cos(frameCount/speedRotation));
+  //box2d.setGravity(0,-gravityPow);
   box2d.step();
 
   fill(0,100);
-  if (random(1) < 0.3 && boxes.size()<400) {
-    Box p = new Box(random(0,width),random(100,300));
-    boxes.add(p);
-  }
-  fill(0,100);
-  if (random(1) < 0.3 && boxes.size()<400) {
-    Box p = new Box(random(0,width),random(200,300));
+  if (random(1) < 1  && boxes.size()<100) {
+    Box p = new Box(random(0,width),random(100,400));
     boxes.add(p);
   }
   
@@ -55,10 +62,18 @@ void draw(){
   for (int i = boxes.size()-1; i >= 0; i--) {
     Box b = boxes.get(i);
     if (b.done()) {
+      beginShape();
+      noFill();
+      stroke(0);
+      strokeWeight(.05);
+      for(int p=0; p<b.trajectoire.size(); p++){
+        RPoint tp = b.trajectoire.get(p);
+        vertex(tp.x,tp.y);
+      }
+      endShape();
       boxes.remove(i);
     }
   }
-  
 }
 void keyPressed(){
   saveFrame("preview.png");

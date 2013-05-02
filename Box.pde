@@ -11,6 +11,8 @@ class Box {
   float w;
   float h;
   int count = 0;
+  ArrayList<RPoint> trajectoire = new ArrayList<RPoint>();
+  
 
   // Constructor
   Box(float x, float y) {
@@ -55,7 +57,10 @@ class Box {
     rotate(-a);
     //fill(175);
     //stroke(0);
-    ellipse(0, 0, w, h);
+    //if(!typo.contains(pos.x, pos.y)){
+      //ellipse(0, 0, w, h);
+      trajectoire.add(new RPoint(pos.x, pos.y));
+    //}
     popMatrix();
   }
 
