@@ -16,8 +16,8 @@ class Box {
 
   // Constructor
   Box(float x, float y) {
-    w = 1;
-    h = 1;
+    w = 5;
+    h = 10;
     // Add the box to the box2d world
     makeBody(new Vec2(x, y), w, h);
   }
@@ -38,12 +38,12 @@ class Box {
       return true;
     }
     Vec2 linVel =body.getLinearVelocity();
-    if( count>2 && linVel.x==0 && linVel.y==0){
+    /*if( count>2 && linVel.x==0 && linVel.y==0){
       return true;
     }
     if(count>500){
       return true;
-    }
+    }*/
     return false;
   }
 
@@ -61,8 +61,8 @@ class Box {
     //fill(175);
     //stroke(0);
    if(!typo.contains(pos.x, pos.y)){
-      //ellipse(0, 0, w, h);
-      trajectoire.add(new RPoint(pos.x, pos.y));
+      rect(0, 0, w, h);
+      //trajectoire.add(new RPoint(pos.x, pos.y));
     }
     popMatrix();
   }
@@ -95,7 +95,7 @@ class Box {
     // Give it some initial random velocity
     float POWER = 20;
     float a = random(0,PI*2);
-    body.setLinearVelocity(new Vec2(POWER*cos(a),POWER*sin(a)));
+    body.setLinearVelocity(new Vec2(0,0));
     body.setAngularVelocity(random(-5, 5));
   }
 }
