@@ -1,72 +1,36 @@
-//
-import processing.pdf.*;
-import geomerative.*;
-import org.apache.batik.svggen.font.table.*;
-import org.apache.batik.svggen.font.*;
-
-
-ArrayList<Box> boxes;
-//
-String title = "archilab";
-RShape typo;
-int steps = 0;
-
+ArrayList<branche> branches = new ArrayList<branche>();
 void setup(){
-  size(900,500);
+  size(1000,1000);
   background(255);
-  SetupTypo();
-  SetupBox2D();
- // frameRate(3);
-  //noSmooth();
-  //noStroke();
-  noFill();
-  boxes = new ArrayList<Box>();
-  //
-}
-void SetupTypo(){
-  RG.init(this);
-  typo = RG.getText(title,"heimatsansregular.ttf",200,CENTER);
-  typo.translate(width/2,height/2+60);
+  fill(0);
+  noStroke();
+setupAllBranches();
 }
 void draw(){
-  
-    step();
-  
-}
-void step(){
-  steps++;
-      // Boxes fall from the top every so often
-  // We must always step through time!
-  background(255);
-  float gravityPow = 60;
-  float speedRotation = 30;
-  //box2d.setGravity(gravityPow*sin(steps/speedRotation), gravityPow*cos(steps/speedRotation));
-  box2d.setGravity(0,-gravityPow);
-  box2d.step();
-
-  if (mousePressed) {
-    Box p = new Box(mouseX,mouseY);
-    boxes.add(p);
+  translate(width/2,height/2);
+  for(branche b:branches){
+    b.draw();
   }
-  
-    // Display all the boxes
-    noStroke();
-  fill(0);
-  for (Box b: boxes) {
-    b.display();
-  }
-  fill(255,0,0);
-  typo.draw();
-
-  // Boxes that leave the screen, we delete them
-  // (note they have to be deleted from both the box2d world and our list
-  for (int i = boxes.size()-1; i >= 0; i--) {
-    Box b = boxes.get(i);
-    if (b.done()) {
-      boxes.remove(i);
+  for(int bi =0; bi<branches.size(); bi++){
+    branche b = branches.get(bi);
+    if(b.dead){
+      branches.remove(bi);
     }
   }
+  if(branches.size()==0){
+    mousePressed();
+  }
 }
-void keyPressed(){
-  saveFrame("preview.png");
+void mousePressed(){
+  background(255);
+  setupAllBranches();
+}
+void setupAllBranches(){
+  branches = new ArrayList<branche>();
+    for(int i=0; i<15; i++){
+    InitBranche();
+  }
+}
+void InitBranche(){
+    branches.add( new branche(new PVector(), new PVector(random(-1,1),random(-1,1)), 0));
 }
