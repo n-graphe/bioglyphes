@@ -8,22 +8,27 @@ class branche{
   float angle = 0;
   int level = 0;
   int MAX_LEVEL = 4;
-  PVector position = new PVector(0,0);
-  PVector velocity = new PVector(0,0);
+  boolean inside = true;
+  RPoint position = new RPoint(0,0);
+  RPoint velocity = new RPoint(0,0);
   //
-  ArrayList<branche> sub = new ArrayList<branche>();
+    float misc = .02;
+    float miscLevel = 0;
+    ArrayList<branche> sub = new ArrayList<branche>();
   //
-  branche(PVector start, PVector startV, int l){
+  branche(RPoint start, RPoint startV, int l){
     level = l;
     //
     if(level == 0){
       //background(255);
     }
     offset = random(0,TWO_PI);
-    lifeTime = (int) random(40,80);
+    lifeTime = (int) random(80-level*10,160-level*20);
     SIZE = (int) random(20,80);
-    position = new PVector(start.x,start.y);
-    velocity = new PVector(startV.x, startV.y);
+    position = new RPoint(start.x,start.y);
+    velocity = new RPoint(startV.x, startV.y);
+    miscLevel =  misc*(2+level*level);
+        inside = typo.contains(position);
   }
   boolean draw(){
     update();   
@@ -43,16 +48,28 @@ class branche{
         t++;
         time = (float)t/lifeTime;
         //
-        float misc = .05;
-        float miscLevel = misc*(1+level);
-        velocity.add(new PVector(random(-miscLevel,miscLevel),random(-miscLevel,miscLevel)));
+        RPoint destination = new RPoint(position);
+        //
+        velocity.add(new RPoint(random(-miscLevel,miscLevel),random(-miscLevel,miscLevel)));
+        destination.add(velocity);
+        if(inside && !typo.contains(destination)){
+        while(!typo.contains(destination) ){//&& !(random(1)<.02)){
+           destination = new RPoint(position);
+           velocity = new RPoint(random(-1,1),random(-.8,1));
+           destination.add(velocity);
+        }
+        }
+        //
         position.add(velocity);
+        inside = typo.contains(position);
         ellipse(position.x,position.y,MAX_LEVEL-level+1,MAX_LEVEL-level+1);
+        drawingCount++;
         //
         if(t>lifeTime){
         if(level<MAX_LEVEL){
+          for(int q=0; q<=1; q++){
           sub.add(new branche(position, velocity, level+1));
-          sub.add(new branche(position, velocity, level+1));
+          }
         }else{
           Kill();
         }
