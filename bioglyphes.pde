@@ -1,93 +1,103 @@
+import geomerative.*;
+import org.apache.batik.svggen.font.table.*;
+import org.apache.batik.svggen.font.*;
+//
+String title = "R";
+RShape typo;
+RGroup rendu;
+RPoint o = new RPoint(0,0); // origine du plan
+//
+RPoint startingPoint;
+//
 ArrayList<branche> branches = new ArrayList<branche>();
-
+//
+int drawingCount = 0;
+//
 void setup(){
   size(1000,1000);
-  background(255);
-  SetupGeomerative();
-  //
-  println(typo.getTangents().length);
-  println(typo.getPoints().length);
   noFill();
   //
+  SetupTypo();
+  //
+  mousePressed();
 }
-
+//
 void draw(){
-  //background(255);
-  //NaturalTangent(new RPoint(mouseX,mouseY));
   //
-  // dessine tous les points
-  stroke(0);
-  strokeWeight(1);
   for(branche b:branches){
-  if(b!=null){
-    RPoint v = NaturalTangent(b.position);
-    v.normalize();
-    b.velocity = v;
-    b.Update();
+    // pour chacunes des branches contenu dans la liste des branches (« mères »)
+    // je la dessine 
+    // > voir la fonction "draw" dans le fichier "branche"
+    b.draw();
   }
-  }
-
-  //
-  for(RPoint p:typo.getPoints()){
-    point(p.x,p.y);
-  }
-
 }
+
+//
+//
+//
+//
 //
 void mousePressed(){
-  branches.add(new branche(new RPoint(mouseX,mouseY),new RPoint(random(-1,1),random(-1,1))));
+  // initialise au clic
+  background(255);
+  setupAllBranches();
 }
-void keyPressed(){
-  saveFrame("f#####.png");
+void SetupTypo(){
+  RG.init(this);
+  rendu = new RGroup();
+  //
+  typo = RG.getText(title,"heimatsansregular.ttf",800,CENTER);
+  typo.translate(width/2,height/2+300);
+  typo.draw();
+  startingPoint = PointInTypo();
 }
-//
-//
-//
-//
-RPoint NaturalTangent(RPoint sourcePoint){
-  //
-  // largeur de la zone de sensibilité
-  int AREA_SIZE = 60;
-  //
-  //ellipse(sourcePoint.x,sourcePoint.y,AREA_SIZE*2,AREA_SIZE*2);
-  //
-  RPoint tangentMedium = new RPoint();
-  //
-  for(float c=0; c<1; c+=.005){
-    // récupère les points de la shape ici chaque 0.5%
-    //
-    RPoint p = typo.getPoint(c);
-    // calcule la distance entre la souris et le point
-    float dist = sourcePoint.dist(p);
-    //
-    // si le point est dans la zone de sensibilité
-    if(dist<AREA_SIZE){
-      // je récupère sa tangente 
-      RPoint t = typo.getTangent(c);
-      // je lui applique une puissance pour filtrer sa distance proche/loin
-      t.scale(pow((AREA_SIZE-dist)/AREA_SIZE,2));
-      // variante avec mouse pressed
-      if(!mousePressed){
-        // le cas normal donc, je fait pointer les tangeante, vers le bas
-        if(t.y<0){
-          t.rotate(PI);
-        }
-      }
-      // j'ajoute la tengeante à la moyenne
-      // add est ici une fontion géométrique (voir RPoint->add)
-     tangentMedium.add(t);
-     //
-     // j'affiche les tangeantes locales
-    //line(p.x,p.y,p.x+t.x,p.y+t.y);
-    }
-
+void setupAllBranches(){
+ branches = new ArrayList<branche>();
+    for(int i=0; i<20; i++){
+    InitBranche();
   }
-   //
-   if(tangentMedium.dist(o)>AREA_SIZE){
-     // si la tengeante est trop grande, je la normalise
-     tangentMedium.normalize();
-     tangentMedium.scale(AREA_SIZE);
-   }
-   //line(sourcePoint.x-tangentMedium.x,sourcePoint.y-tangentMedium.y,sourcePoint.x+tangentMedium.x,sourcePoint.y+tangentMedium.y);
-  return tangentMedium;
+}
+
+RPoint PointInTypo(){
+  //
+  // retourne un point au hasard DANS le corps de la typo
+  //
+  RPoint p = new RPoint();
+  while(!typo.contains(p)){
+    p = new RPoint(random(0,width),random(0,height));
+  }
+  return p;
+}
+
+//
+void InitBranche(){
+    // fonction qui ajoute une nouvelle branche à la liste des branches.
+    //
+    // ajoute une branche DANS la typo
+    branches.add( new branche(PointInTypo(), new RPoint(random(-1,1),random(-.2,1)), 0,color(0)));
+    //
+    // ajoute une branche en un centre
+    //
+    //branches.add( new branche(new RPoint(width/2,height*1/3), new RPoint(random(-1,1),random(.1,1)), 0,color(0,255*random(0,1))));
+    //
+    // Attention, les valeurs en attributs sont importantes. la class new Branche prend 3 arguments, 2 points, et un niveau)
+    // 1/ position initiale
+    // 2/ vélocité initiale random entre -1 et 1 en X et .1 et 1 en Y pour avoir une tendance initiale à tomber
+    // 3/ niveau 0
+    
+}
+//
+void keyPressed(){
+  // sauvegarde une frame
+  if(key=='s'){
+    saveFrame("frame#####.png");
+    RSVG svg = new RSVG();
+    svg.fromGroup(rendu);
+    rendu.setStroke(true);
+    rendu.setStrokeWeight(4);
+    rendu.setStroke(0x000000);
+    println(rendu.elements.length);
+    svg.saveGroup("rendu"+frameCount+".svg",rendu);
+    //String xml = svg
+  }
 }
