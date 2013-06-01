@@ -52,18 +52,18 @@ class branche {
     c = _c;
     //
     // établie une durée de vie aléatoire pour chaque branche.
-    lifeTime = (int) random(20, 60);
+    lifeTime = (int) random(10, 60);
     //
     position = new RPoint(start.x, start.y); // initialise la position initiale
     cluster.add(new RPoint(position));
     velocity = new RPoint(startV.x, startV.y); // initialise la vélocité initiale
-    miscLevel = misc*(2+level*level); // initialise le niveau de "mélange" de la branche, 
+    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1)); // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
-    strokeWeight = fontSize/400*(MAX_LEVEL-level+1);
+    strokeWeight = fontSize/400*(MAX_LEVEL-level+2);
     //
-    maxSpeed = (MAX_LEVEL-level)*2+fontSize/800;
+    maxSpeed = (MAX_LEVEL-level+4)*fontSize/800;
     //
     returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,24);
     retourRandom = random(1,30);
@@ -121,7 +121,7 @@ class branche {
           velocity.normalize();
           velocity.scale(maxSpeed);
         } 
-        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*.1, miscLevel*.5)));
+        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*.2*(MAX_LEVEL-level)/MAX_LEVEL, miscLevel*level/MAX_LEVEL)));
         //
         //     
         // operations concernant le teste de typo, je les ai laissé en commentaires
@@ -197,7 +197,7 @@ class branche {
     strokeCap(SQUARE);
     //DrawClusterWeight((MAX_LEVEL-level)+3,color(255));
     strokeCap(ROUND);
-    DrawClusterWeight((MAX_LEVEL-level)*fontSize/400, c);
+    DrawClusterWeight(pow((MAX_LEVEL-level),1.5)*fontSize/400, c);
   }
 
   void DrawClusterWeight(float n, color c) {

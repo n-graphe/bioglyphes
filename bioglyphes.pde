@@ -90,8 +90,8 @@ void setupAllBranches(){
  branches = new ArrayList<branche>();
     for(int i=0; i<typo.children.length; i++){
        RShape letter = typo.children[i];
+       for(int j=0; j<4; j++){
        RPoint startingPoint = PointInShape(letter);
-       for(int j=0; j<2; j++){
         branches.add( new branche(startingPoint, new RPoint(random(-1,1),random(-.2,1)), 0,color(random(64))));
         //InitBranche(letter);
        }
@@ -105,7 +105,7 @@ RPoint PointInShape(RShape shape){
   RPoint p = new RPoint();
   //
   while(!shape.contains(p)){
-    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.1));
+    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.3));
   }
   return p;
 }
