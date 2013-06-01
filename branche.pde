@@ -29,9 +29,14 @@ class branche {
   // variable qui permet de modifier le niveau de chaos dans la forme de la branche
   float miscLevel = 0;
   //
+  float maxSpeed = 2;
+  //
   // angle de rotation en cas de sortie de la lettre;
   float returnOutAngle = PI/2;
   float retourRandom = 1;
+  boolean inside = true;
+  // 
+  float strokeWeight = 0;
   //
   // liste des branches DIRECTEMENT enfantes de la branche actuelle.
   ArrayList<branche> sub = new ArrayList<branche>();
@@ -52,12 +57,16 @@ class branche {
     position = new RPoint(start.x, start.y); // initialise la position initiale
     cluster.add(new RPoint(position));
     velocity = new RPoint(startV.x, startV.y); // initialise la vélocité initiale
-    miscLevel =  misc*(2+level*level); // initialise le niveau de "mélange" de la branche, 
+    miscLevel = misc*(2+level*level); // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
-    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,16);
-    retourRandom = random(1,20);
+    strokeWeight = fontSize/400*(MAX_LEVEL-level+1);
+    //
+    maxSpeed = (MAX_LEVEL-level)*2+fontSize/800;
+    //
+    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,24);
+    retourRandom = random(1,30);
     // angle de rotation en cas de sortie de la lettre;
   }
   boolean draw() {
@@ -108,11 +117,11 @@ class branche {
         time = (float)t/lifeTime;
         //
         // je modifie la vélocité, en fonction du degrée de miscellaneus
-        if (velocity.dist(o)>(2+level/2)) {
+        if (velocity.dist(o)>(maxSpeed)) {
           velocity.normalize();
-          velocity.scale((2+level/2));
+          velocity.scale(maxSpeed);
         } 
-        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel, miscLevel)));
+        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*.1, miscLevel*.5)));
         //
         //     
         // operations concernant le teste de typo, je les ai laissé en commentaires
@@ -129,8 +138,12 @@ class branche {
         //
         RPoint destination = new RPoint(position);
         //
-        if ( !typo.contains(destination) ) {
+        inside = typo.contains(destination);
+        if ( !inside ) {
+          //velocity.rotate(-PI);
+          //velocity.rotate(random(-PI/4,PI/4));
           velocity.rotate(returnOutAngle/random(1,retourRandom));
+          //velocity.scale(.999);
         }
         //
         // ajoute la vélocité (le déplacement, c'est un vecteur) à la position.
@@ -145,16 +158,22 @@ class branche {
         // ajoute la nouvelle position au cluster
         cluster.add(new RPoint(position));
         // avant je dessinait des éllipses au lieu de l'ajouter au cluster
-        //noStroke();
-        //fill(c);
-        //ellipse(position.x, position.y, MAX_LEVEL-level+1, MAX_LEVEL-level+1);
+        ///*
+        if(debug){
+          noStroke();
+          fill(c);
+          ellipse(position.x, position.y, strokeWeight, strokeWeight);
+        }
+        //*/
         //
         // si le t a dépassé la durée de vie
         if (t>lifeTime) {
           // si le niveau n'est pas le maximum possible
           if (level<MAX_LEVEL) {
             // je dessine le cluster
-            DrawCluster();
+            if(!debug){
+              DrawCluster();
+            }
             // j'ajoute 2 branches enfantes (j'ai fait une boucle for, car on pourrait imaginer ajouter plus de branches)
             for (int q=0; q<=1; q++) {
               // ajoute UNE sous-branche à la liste
@@ -178,7 +197,7 @@ class branche {
     strokeCap(SQUARE);
     //DrawClusterWeight((MAX_LEVEL-level)+3,color(255));
     strokeCap(ROUND);
-    DrawClusterWeight(MAX_LEVEL-level, color(0));
+    DrawClusterWeight((MAX_LEVEL-level)*fontSize/400, c);
   }
 
   void DrawClusterWeight(float n, color c) {
@@ -191,11 +210,14 @@ class branche {
     contour.setStroke(true);
     contour.setStroke("#000000");
     contour.setStrokeWeight(n);
-    for (RPoint p:cluster) {
+   contour.addClose();
+   for (RPoint p:cluster) {
       vertex(p.x,p.y);
-      contour.addPoint(p.x, p.y);
+      //contour.addPoint(p.x, p.y);
     }
     //group.addElement(contour);
+    contour.addClose();
+    //contour.draw();
     rendu.addElement(contour);
     endShape();
   }
