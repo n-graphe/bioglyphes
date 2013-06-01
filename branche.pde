@@ -193,11 +193,12 @@ class branche {
   //
   //
   void DrawCluster() {
+    float sW = pow((MAX_LEVEL-level),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    //DrawClusterWeight((MAX_LEVEL-level)+3,color(255));
+    DrawClusterWeight(sW*1.2,color(0));
     strokeCap(ROUND);
-    DrawClusterWeight(pow((MAX_LEVEL-level),1.5)*fontSize/400, c);
+    DrawClusterWeight(sW, color(255));
   }
 
   void DrawClusterWeight(float n, color c) {

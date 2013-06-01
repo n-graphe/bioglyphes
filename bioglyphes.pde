@@ -61,8 +61,12 @@ void draw(){
         noStroke();
         fill(255);
         typo.draw();
+		saveFrame("preview.png");
         endRecord();
         exit();
+      }else{
+        fill(255);
+        typo.draw();
       }
   }
 }
