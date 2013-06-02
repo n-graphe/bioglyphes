@@ -202,12 +202,15 @@ class branche {
   //
   //
   void DrawCluster() {
-    float sW = pow((MAX_LEVEL-level),2)*fontSize/600;
+    float sW = pow((MAX_LEVEL-level+random(1)),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    //DrawClusterWeight(sW*1.4,color(255));
+    DrawClusterWeight(sW*1.4,color(255));
     strokeCap(ROUND);
     DrawClusterWeight(sW, color(0));
+    //
+    strokeCap(SQUARE);
+    DrawClusterHair(sW);
   }
 
   void DrawClusterWeight(float n, color c) {
@@ -234,6 +237,21 @@ class branche {
     //contour.draw();
     rendu.addElement(contour);
     endShape();
+  }
+  
+  void DrawClusterHair(float sw){
+    if(level<2){
+       for (int i=0; i<cluster.size();i++) {
+        RPoint p = cluster.get(i);
+        RPoint vp = new RPoint(clusterVelocity.get(i));
+        vp.rotate((random(1)<.5?1:-1)*PI/2);
+        vp.rotate(random(-PI/3,PI/3));
+        strokeWeight(sw/random(3,9));
+        float sww = random(2)+sw;
+        stroke(0);
+        line(p.x,p.y,p.x+vp.x*sw/6,p.y+vp.y*sw/6);
+       }
+    }
   }
 
   void Kill() {
