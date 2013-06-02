@@ -58,7 +58,7 @@ class branche {
     c = _c;
     //
     // établie une durée de vie aléatoire pour chaque branche.
-    lifeTime = level==0? 40 :(int) random(4, 4+level*2);
+    lifeTime = level==0? 20 :(int) random(4, 4+level*3);
     //
     position = new RPoint(start.x, start.y); // initialise la position initiale
     cluster.add(new RPoint(position));
@@ -74,6 +74,7 @@ class branche {
     //
     returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(1,2+(MAX_LEVEL-level)*4);
     retourRandom = random(1,30);
+    //
     // angle de rotation en cas de sortie de la lettre;
   }
   boolean draw() {
@@ -205,12 +206,12 @@ class branche {
     float sW = pow((MAX_LEVEL-level+random(1)),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    DrawClusterWeight(sW*1.4,color(255));
+    //DrawClusterWeight(sW*1.4,color(255));
     strokeCap(ROUND);
-    DrawClusterWeight(sW, color(0));
+    DrawClusterWeight(sW, c);
     //
     strokeCap(SQUARE);
-    DrawClusterHair(sW);
+    //DrawClusterHair(sW);
   }
 
   void DrawClusterWeight(float n, color c) {

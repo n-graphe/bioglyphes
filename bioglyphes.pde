@@ -5,7 +5,7 @@ import geomerative.*;
 import org.apache.batik.svggen.font.table.*;
 import org.apache.batik.svggen.font.*;
 //
-String title = "Naturaliser";
+String title = "Vers";
 Boolean[] letterDrawnd;
 int letterDrawing = 0;
 RShape typo;
@@ -13,7 +13,7 @@ RGroup rendu;
 RPoint o = new RPoint(0,0); // origine du plan
 //
 float viewScale = 3;
-float fontSize = 200;
+float fontSize = 300;
 boolean debug = false;
 //
 RPoint startingPoint;
@@ -24,7 +24,7 @@ ArrayList<branche> branches = new ArrayList<branche>();
 int drawingCount = 0;
 //
 void setup(){
-  size(1600,800);
+  size(1600,1200);
   background(255);
   //
   if(!debug){
@@ -63,13 +63,6 @@ void draw(){
     }
   }
   //
-  //if(random(1)<.2){
-        noStroke();
-        fill(255);
-        typo.children[(int) floor(random(0,letterDrawnd.length))].draw();
-        noFill();
-       letterDrawing++;
-  //}
   //
   for(int br=0; br < branches.size(); br++){
     branche b = branches.get(br);
@@ -82,7 +75,7 @@ void draw(){
     if(!debug){
         noStroke();
         fill(255);
-        //typo.draw();
+        typo.draw();
 		saveFrame("preview.png");
         endRecord();
         exit();
@@ -118,11 +111,11 @@ void setupAllBranches(){
     for(int i=0; i<typo.children.length; i++){
        RShape letter = typo.children[i];
        letterDrawnd[i] = false;
-       for(int j=0; j<4; j++){
+       for(int j=0; j<5; j++){
        RPoint startingPoint = PointInShape(letter);
         //
         float startSpeed = maxSpeed();
-        branches.add( new branche(startingPoint, new RPoint(random(-startSpeed,startSpeed),random(-.2*startSpeed,startSpeed)), 0,color(random(64))));
+        branches.add( new branche(startingPoint, new RPoint(random(-startSpeed,startSpeed),random(-.2*startSpeed,startSpeed)), 0,color(i%2==0?0:255)));
         //InitBranche(letter);
        }
   }
