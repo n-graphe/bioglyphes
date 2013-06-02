@@ -72,7 +72,7 @@ class branche {
     //
     maxSpeed = maxSpeed();
     //
-    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,6+(MAX_LEVEL-level)*6);
+    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(1,2+(MAX_LEVEL-level)*4);
     retourRandom = random(1,30);
     // angle de rotation en cas de sortie de la lettre;
   }
@@ -204,7 +204,7 @@ class branche {
     float sW = pow((MAX_LEVEL-level),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    //DrawClusterWeight(sW*2,color(255));
+    DrawClusterWeight(sW*1.4,color(255));
     strokeCap(ROUND);
     DrawClusterWeight(sW, color(0));
   }

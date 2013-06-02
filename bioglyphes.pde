@@ -1,3 +1,4 @@
+import java.util.Date;
 import processing.pdf.*;
 
 import geomerative.*;
@@ -25,7 +26,7 @@ void setup(){
   background(255);
   //
   if(!debug){
-    beginRecord(PDF,"record-"+hour()+""+minute()+"-"+second()+".pdf");
+    beginRecord(PDF,"record-"+timestamp()+".pdf");
   }
   //
   randomSeed(0);
@@ -34,7 +35,7 @@ void setup(){
   noStroke();
   SetupTypo();
   //
-  frameRate(4);
+  //frameRate(4);
   //
   mousePressed();
   //
@@ -49,11 +50,15 @@ void setup(){
 //
 void draw(){
   //
-  for(branche b:branches){
+  for(int br=0; br < 1; br++){
+    branche b = branches.get(br);
     // pour chacunes des branches contenu dans la liste des branches (« mères »)
     // je la dessine 
     // > voir la fonction "draw" dans le fichier "branche"
-    b.draw();
+    for(int n=0; n<10; n++){
+      // accelere le dessin
+      b.draw();
+    }
   }
   for(int br=0; br < branches.size(); br++){
     branche b = branches.get(br);
@@ -65,6 +70,8 @@ void draw(){
     if(!debug){
         noStroke();
         fill(255);
+        //stroke(0);
+        //strokeWeight(1);
         typo.draw();
 		saveFrame("preview.png");
         endRecord();
@@ -143,29 +150,9 @@ void InitBranche(RShape s){
 void keyPressed(){
   // sauvegarde une frame
   if(key=='s'){
-    saveFrame("line-######.png");
-   /* RSVG svg = new RSVG();
-    RGroup g = new RGroup();
-    RContour c = new RContour();
-    RShape s;
-    //
-    for(int i=0; i<200; i++){
-      c.addPoint(i*2,random(200));
-    }
-    s = c.toMesh().toShape();
-    s.strokeWeight(2);
-    s.stroke(0);
-    s.draw();*/
-    //
-    //RShape rshape = rendu.toShape();
-    /*print(svg.fromGroup(rendu));
-    rendu.setStroke(true);
-    rendu.setStrokeWeight(4);
-    rendu.setStroke(0x000000);
-    rendu.draw();
-    println(rendu.elements.length);
-    //svg.saveGroup("rendu"+frameCount+".svg",rendu);
-    //*/
-    //String xml = svg
+    saveFrame("line-"+timestamp()+".png");
   }
+}
+long timestamp(){
+  return (new Date()).getTime();
 }
