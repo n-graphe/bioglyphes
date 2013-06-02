@@ -1,3 +1,7 @@
+float maxSpeed(){
+  return fontSize/30;
+}
+
 class branche {
   //
   //
@@ -22,6 +26,8 @@ class branche {
   //
   // grappe de points qui seront les points à dessiner, à relier.
   ArrayList<RPoint> cluster = new ArrayList();
+  // grappe de points qui seront la tangeante locale des points à dessiner, à relier.
+  ArrayList<RPoint> clusterVelocity = new ArrayList();
   //
   // misc -> miscellaneous -> du latin miscellaneus, « choses mêlées »
   // c’est une constante de "mélange" que j'utilise pour controller l'aspect chaotique ou non, de la vélocité
@@ -52,20 +58,21 @@ class branche {
     c = _c;
     //
     // établie une durée de vie aléatoire pour chaque branche.
-    lifeTime = (int) random(10, 60);
+    lifeTime = (int) random(5, 15);
     //
     position = new RPoint(start.x, start.y); // initialise la position initiale
     cluster.add(new RPoint(position));
     velocity = new RPoint(startV.x, startV.y); // initialise la vélocité initiale
+    clusterVelocity.add(new RPoint(velocity));
     miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1)); // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
     strokeWeight = fontSize/400*(MAX_LEVEL-level+2);
     //
-    maxSpeed = (MAX_LEVEL-level+4)*fontSize/800;
+    maxSpeed = maxSpeed();
     //
-    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,24);
+    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(6,6+(MAX_LEVEL-level)*6);
     retourRandom = random(1,30);
     // angle de rotation en cas de sortie de la lettre;
   }
@@ -143,7 +150,7 @@ class branche {
           //velocity.rotate(-PI);
           //velocity.rotate(random(-PI/4,PI/4));
           velocity.rotate(returnOutAngle/random(1,retourRandom));
-          //velocity.scale(.999);
+          //velocity.scale(.95);
         }
         //
         // ajoute la vélocité (le déplacement, c'est un vecteur) à la position.
@@ -157,6 +164,7 @@ class branche {
         //
         // ajoute la nouvelle position au cluster
         cluster.add(new RPoint(position));
+        clusterVelocity.add(new RPoint(velocity));
         // avant je dessinait des éllipses au lieu de l'ajouter au cluster
         ///*
         if(debug){
@@ -196,9 +204,9 @@ class branche {
     float sW = pow((MAX_LEVEL-level),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    DrawClusterWeight(sW*1.2,color(0));
+    //DrawClusterWeight(sW*2,color(255));
     strokeCap(ROUND);
-    DrawClusterWeight(sW, color(255));
+    DrawClusterWeight(sW, color(0));
   }
 
   void DrawClusterWeight(float n, color c) {
@@ -212,8 +220,12 @@ class branche {
     contour.setStroke("#000000");
     contour.setStrokeWeight(n);
    contour.addClose();
-   for (RPoint p:cluster) {
-      vertex(p.x,p.y);
+   vertex(cluster.get(0).x,cluster.get(0).y);
+   for (int i=0; i<cluster.size();i++) {
+      RPoint p = cluster.get(i);
+      RPoint vp = clusterVelocity.get(i);
+      //vertex(p.x,p.y);
+      quadraticVertex(p.x-vp.x,p.y-vp.y,p.x,p.y);
       //contour.addPoint(p.x, p.y);
     }
     //group.addElement(contour);

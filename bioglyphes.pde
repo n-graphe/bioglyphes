@@ -4,13 +4,13 @@ import geomerative.*;
 import org.apache.batik.svggen.font.table.*;
 import org.apache.batik.svggen.font.*;
 //
-String title = "Architecture";
+String title = "Naturaliser";
 RShape typo;
 RGroup rendu;
 RPoint o = new RPoint(0,0); // origine du plan
 //
 float viewScale = 3;
-float fontSize = 160;
+float fontSize = 200;
 boolean debug = false;
 //
 RPoint startingPoint;
@@ -33,11 +33,16 @@ void setup(){
   fill(0);
   noStroke();
   SetupTypo();
-  noFill();
   //
-  //frameRate(5);
+  frameRate(4);
   //
   mousePressed();
+  //
+  if(debug){
+    fill(220);
+    typo.draw();
+  }
+  noFill();
   //
   
 }
@@ -66,7 +71,7 @@ void draw(){
         exit();
       }else{
         fill(255);
-        typo.draw();
+        //typo.draw();
       }
   }
 }
@@ -85,7 +90,7 @@ void SetupTypo(){
   RG.init(this);
   rendu = new RGroup();
   //
-  typo = RG.getText(title,"heimatsansregular.ttf",(int)fontSize,CENTER);
+  typo = RG.getText(title,"heimatsansbold.ttf",(int)fontSize,CENTER);
   typo.translate(width/2,height/2+fontSize/3);
   typo.draw();
   startingPoint = PointInShape(typo);
@@ -96,7 +101,9 @@ void setupAllBranches(){
        RShape letter = typo.children[i];
        for(int j=0; j<4; j++){
        RPoint startingPoint = PointInShape(letter);
-        branches.add( new branche(startingPoint, new RPoint(random(-1,1),random(-.2,1)), 0,color(random(64))));
+        //
+        float startSpeed = maxSpeed();
+        branches.add( new branche(startingPoint, new RPoint(random(-startSpeed,startSpeed),random(-.2*startSpeed,startSpeed)), 0,color(random(64))));
         //InitBranche(letter);
        }
   }
@@ -109,7 +116,7 @@ RPoint PointInShape(RShape shape){
   RPoint p = new RPoint();
   //
   while(!shape.contains(p)){
-    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.3));
+    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.1));
   }
   return p;
 }
@@ -119,6 +126,7 @@ void InitBranche(RShape s){
     // fonction qui ajoute une nouvelle branche à la liste des branches.
     //
     // ajoute une branche DANS la typo
+    //
     branches.add( new branche(PointInShape(s), new RPoint(random(-1,1),random(-.2,1)), 0,color(random(128))));
     //
     // ajoute une branche en un centre
