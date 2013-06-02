@@ -6,6 +6,8 @@ import org.apache.batik.svggen.font.table.*;
 import org.apache.batik.svggen.font.*;
 //
 String title = "Naturaliser";
+Boolean[] letterDrawnd;
+int letterDrawing = 0;
 RShape typo;
 RGroup rendu;
 RPoint o = new RPoint(0,0); // origine du plan
@@ -50,29 +52,37 @@ void setup(){
 //
 void draw(){
   //
-  for(int br=0; br < 1; br++){
+  for(int br=0; br < branches.size(); br++){
     branche b = branches.get(br);
     // pour chacunes des branches contenu dans la liste des branches (« mères »)
     // je la dessine 
     // > voir la fonction "draw" dans le fichier "branche"
-    for(int n=0; n<10; n++){
+    for(int n=0; n<1; n++){
       // accelere le dessin
       b.draw();
     }
   }
+  //
+  //if(random(1)<.2){
+        noStroke();
+        fill(255);
+        typo.children[(int) floor(random(0,letterDrawnd.length))].draw();
+        noFill();
+       letterDrawing++;
+  //}
+  //
   for(int br=0; br < branches.size(); br++){
     branche b = branches.get(br);
     if(b.dead){
       branches.remove(b);
-    }
+     }
   }
+  //
   if(branches.size()==0){
     if(!debug){
         noStroke();
         fill(255);
-        //stroke(0);
-        //strokeWeight(1);
-        typo.draw();
+        //typo.draw();
 		saveFrame("preview.png");
         endRecord();
         exit();
@@ -104,8 +114,10 @@ void SetupTypo(){
 }
 void setupAllBranches(){
  branches = new ArrayList<branche>();
+ letterDrawnd = new Boolean[typo.children.length];
     for(int i=0; i<typo.children.length; i++){
        RShape letter = typo.children[i];
+       letterDrawnd[i] = false;
        for(int j=0; j<4; j++){
        RPoint startingPoint = PointInShape(letter);
         //
