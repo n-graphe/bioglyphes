@@ -66,11 +66,11 @@ class branche {
     clusterVelocity.add(new RPoint(velocity));
     //
     //
-    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/100; // initialise le niveau de "mélange" de la branche, 
+    miscLevel = level==MAX_LEVEL-2?misc*(2+(level)*(level+1))*fontSize/30:misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/100; // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
-    strokeWeight = pow((MAX_LEVEL-level+random(1)),2)*fontSize/1000;
+    strokeWeight = pow((MAX_LEVEL-level+random(1)),3)*fontSize/8000;
     //
     maxSpeed = maxSpeed();
     //
@@ -151,29 +151,20 @@ class branche {
         inside = typo.contains(destination);
         if ( !inside ) {
           
-          velocity.rotate(returnOutAngle/random(1,retourRandom));
-           
-          //velocity.rotate(-PI);
-          //velocity.rotate(random(-PI/4,PI/4));
-          //velocity.rotate(returnOutAngle/random(1,retourRandom));
-          //velocity.scale(.95);
-          
-          if(level<4){
-            //velocity.rotate(PI);
-            velocity.scale(.1);
-          }
+          velocity.rotate(returnOutAngle/random(1,retourRandom));       
 
         }
-        if(level<3 && random(1)<.3){
-          /*RPoint naturalT = new RPoint(NaturalTangent(position));
+        if(level<3){
+          
+          RPoint naturalT = new RPoint(NaturalTangent(position));
           naturalT.normalize();
           naturalT.scale(velocity.dist(o));
           velocity.add(naturalT);
           
           if (velocity.dist(o)>(maxSpeed)) {
-          velocity.normalize();
-          velocity.scale(maxSpeed);
-        } */
+            velocity.normalize();
+            velocity.scale(maxSpeed);
+          } 
 
         }
         //
@@ -207,7 +198,7 @@ class branche {
               DrawCluster();
             }
             // j'ajoute 2 branches enfantes (j'ai fait une boucle for, car on pourrait imaginer ajouter plus de branches)
-            int nbSubBranches = level>2?(int)random(1,level):1;
+            int nbSubBranches = level==0?3:level==MAX_LEVEL-1?(int)random(6):1;
             for (int q=0; q<=nbSubBranches; q++) {
               // ajoute UNE sous-branche à la liste
               sub.add(new branche(position, velocity, level+1, c));

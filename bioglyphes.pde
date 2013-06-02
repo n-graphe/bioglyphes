@@ -5,7 +5,7 @@ import geomerative.*;
 import org.apache.batik.svggen.font.table.*;
 import org.apache.batik.svggen.font.*;
 //
-String title = "NATURE";
+String title = "à partir de la";
 Boolean[] letterDrawnd;
 int letterDrawing = 0;
 RShape typo;
@@ -13,7 +13,7 @@ RGroup rendu;
 RPoint o = new RPoint(0,0); // origine du plan
 //
 float viewScale = 3;
-float fontSize = 300;
+float fontSize = 200;
 boolean debug = false;
 //
 RPoint startingPoint;
@@ -114,7 +114,8 @@ void setupAllBranches(){
     for(int i=0; i<typo.children.length; i++){
        RShape letter = typo.children[i];
        letterDrawnd[i] = false;
-       for(int j=0; j<3; j++){
+       //
+       for(int j=0; j<2; j++){
        RPoint startingPoint = PointInShape(letter);
         //
         float startSpeed = maxSpeed();
