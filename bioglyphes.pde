@@ -123,7 +123,7 @@ RPoint PointInShape(RShape shape){
   RPoint p = new RPoint();
   //
   while(!shape.contains(p)){
-    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.1));
+    p = new RPoint(random(shape.getX(),shape.getX()+shape.getWidth()),random(shape.getY(),shape.getY()+shape.getHeight()*.5));
   }
   return p;
 }

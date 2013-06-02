@@ -58,7 +58,7 @@ class branche {
     c = _c;
     //
     // établie une durée de vie aléatoire pour chaque branche.
-    lifeTime = (int) random(5, 15);
+    lifeTime = level==0? 40 :(int) random(4, 4+level*2);
     //
     position = new RPoint(start.x, start.y); // initialise la position initiale
     cluster.add(new RPoint(position));
@@ -183,7 +183,8 @@ class branche {
               DrawCluster();
             }
             // j'ajoute 2 branches enfantes (j'ai fait une boucle for, car on pourrait imaginer ajouter plus de branches)
-            for (int q=0; q<=1; q++) {
+            int nbSubBranches = level>2?(int)random(1,level):1;
+            for (int q=0; q<=nbSubBranches; q++) {
               // ajoute UNE sous-branche à la liste
               sub.add(new branche(position, velocity, level+1, c));
             }
@@ -204,7 +205,7 @@ class branche {
     float sW = pow((MAX_LEVEL-level),2)*fontSize/600;
     // dessine les deux lignes
     strokeCap(SQUARE);
-    DrawClusterWeight(sW*1.4,color(255));
+    //DrawClusterWeight(sW*1.4,color(255));
     strokeCap(ROUND);
     DrawClusterWeight(sW, color(0));
   }
