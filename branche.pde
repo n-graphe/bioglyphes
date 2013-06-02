@@ -66,11 +66,11 @@ class branche {
     clusterVelocity.add(new RPoint(velocity));
     //
     //
-    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/50; // initialise le niveau de "mélange" de la branche, 
+    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/100; // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
-    strokeWeight = pow((MAX_LEVEL-level+random(1)),2)*fontSize/2000;
+    strokeWeight = pow((MAX_LEVEL-level+random(1)),2)*fontSize/1000;
     //
     maxSpeed = maxSpeed();
     //
@@ -131,7 +131,7 @@ class branche {
           velocity.normalize();
           velocity.scale(maxSpeed);
         } 
-        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*(MAX_LEVEL-level)/3, miscLevel*(1+level/4))));
+        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*(MAX_LEVEL-level)*1/MAX_LEVEL, miscLevel*(1+level/4))));
         //
         //     
         // operations concernant le teste de typo, je les ai laissé en commentaires
@@ -152,24 +152,29 @@ class branche {
         if ( !inside ) {
           
           velocity.rotate(returnOutAngle/random(1,retourRandom));
-
+           
+          //velocity.rotate(-PI);
+          //velocity.rotate(random(-PI/4,PI/4));
+          //velocity.rotate(returnOutAngle/random(1,retourRandom));
+          //velocity.scale(.95);
+          
+          if(level<4){
+            //velocity.rotate(PI);
+            velocity.scale(.1);
           }
-        if(level<3){
-          RPoint naturalT = new RPoint(NaturalTangent(position));
+
+        }
+        if(level<3 && random(1)<.3){
+          /*RPoint naturalT = new RPoint(NaturalTangent(position));
           naturalT.normalize();
           naturalT.scale(velocity.dist(o));
-          naturalT.scale(2);
           velocity.add(naturalT);
           
           if (velocity.dist(o)>(maxSpeed)) {
           velocity.normalize();
           velocity.scale(maxSpeed);
-        } 
-          
-          //velocity.rotate(-PI);
-          //velocity.rotate(random(-PI/4,PI/4));
-          //velocity.rotate(returnOutAngle/random(1,retourRandom));
-          //velocity.scale(.95);
+        } */
+
         }
         //
         // ajoute la vélocité (le déplacement, c'est un vecteur) à la position.
