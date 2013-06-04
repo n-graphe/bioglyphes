@@ -64,11 +64,13 @@ class branche {
     cluster.add(new RPoint(position));
     velocity = new RPoint(startV.x, startV.y); // initialise la vélocité initiale
     clusterVelocity.add(new RPoint(velocity));
-    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1)); // initialise le niveau de "mélange" de la branche, 
+    //
+    //
+    miscLevel = misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/50; // initialise le niveau de "mélange" de la branche, 
     // en fonction de son niveau dans la hiérarchie
     // plus une branche est enfante, plus elle est chaotique
     //
-    strokeWeight = fontSize/400*(MAX_LEVEL-level+2);
+    strokeWeight = pow((MAX_LEVEL-level+random(1)),2)*fontSize/2000;
     //
     maxSpeed = maxSpeed();
     //
@@ -129,7 +131,7 @@ class branche {
           velocity.normalize();
           velocity.scale(maxSpeed);
         } 
-        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*.2*(MAX_LEVEL-level)/MAX_LEVEL, miscLevel*level/MAX_LEVEL)));
+        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*(MAX_LEVEL-level)/3, miscLevel*(1+level/4))));
         //
         //     
         // operations concernant le teste de typo, je les ai laissé en commentaires
@@ -148,9 +150,25 @@ class branche {
         //
         inside = typo.contains(destination);
         if ( !inside ) {
+          
+          velocity.rotate(returnOutAngle/random(1,retourRandom));
+
+          }
+        if(level<3){
+          RPoint naturalT = new RPoint(NaturalTangent(position));
+          naturalT.normalize();
+          naturalT.scale(velocity.dist(o));
+          naturalT.scale(2);
+          velocity.add(naturalT);
+          
+          if (velocity.dist(o)>(maxSpeed)) {
+          velocity.normalize();
+          velocity.scale(maxSpeed);
+        } 
+          
           //velocity.rotate(-PI);
           //velocity.rotate(random(-PI/4,PI/4));
-          velocity.rotate(returnOutAngle/random(1,retourRandom));
+          //velocity.rotate(returnOutAngle/random(1,retourRandom));
           //velocity.scale(.95);
         }
         //
@@ -203,7 +221,7 @@ class branche {
   //
   //
   void DrawCluster() {
-    float sW = pow((MAX_LEVEL-level+random(1)),2)*fontSize/600;
+    float sW = strokeWeight;
     // dessine les deux lignes
     strokeCap(SQUARE);
     //DrawClusterWeight(sW*1.4,color(255));
