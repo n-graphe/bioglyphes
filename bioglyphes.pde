@@ -1,68 +1,93 @@
-import geomerative.*;
-import org.apache.batik.svggen.font.table.*;
-import org.apache.batik.svggen.font.*;
-//
-String title = "aA";
-RShape typo;
-//
 ArrayList<branche> branches = new ArrayList<branche>();
-//
-int drawingCount = 0;
-//
+
 void setup(){
   size(1000,1000);
   background(255);
-  fill(0);
-  noStroke();
-    SetupTypo();
+  SetupGeomerative();
+  //
+  println(typo.getTangents().length);
+  println(typo.getPoints().length);
+  noFill();
+  //
+}
 
-setupAllBranches();
-}
-int frameWait = 0;
 void draw(){
-  drawingCount = 0;
+  //background(255);
+  //NaturalTangent(new RPoint(mouseX,mouseY));
+  //
+  // dessine tous les points
+  stroke(0);
+  strokeWeight(1);
   for(branche b:branches){
-    b.draw();
+  if(b!=null){
+    RPoint v = NaturalTangent(b.position);
+    v.normalize();
+    b.velocity = v;
+    b.Update();
   }
-  for(int bi =0; bi<branches.size(); bi++){
-    branche b = branches.get(bi);
-    if(b.dead){
-      branches.remove(bi);
-    }
   }
-  if(branches.size()==0){
-     // mousePressed();
+
+  //
+  for(RPoint p:typo.getPoints()){
+    point(p.x,p.y);
   }
-  print(" > "+drawingCount);
+
 }
+//
 void mousePressed(){
-  background(255);
-  setupAllBranches();
-}
-void SetupTypo(){
-  RG.init(this);
-  typo = RG.getText(title,"heimatsansregular.ttf",800,CENTER);
-  typo.translate(width/2,height/2+100);
-  //typo.draw();
-}
-void setupAllBranches(){
-  branches = new ArrayList<branche>();
-    for(int i=0; i<20; i++){
-    InitBranche();
-  }
-}
-RPoint PointInTypo(){
-  RPoint p = new RPoint();
-  while(!typo.contains(p)){
-    p = new RPoint(random(0,width),random(0,height));
-  }
-  return p;
-}
-void InitBranche(){
-    branches.add( new branche(PointInTypo(), new RPoint(random(-1,1),random(-.2,1)), 0));
+  branches.add(new branche(new RPoint(mouseX,mouseY),new RPoint(random(-1,1),random(-1,1))));
 }
 void keyPressed(){
-  if(key=='s'){
-    saveFrame("frame#####.png");
+  saveFrame("f#####.png");
+}
+//
+//
+//
+//
+RPoint NaturalTangent(RPoint sourcePoint){
+  //
+  // largeur de la zone de sensibilité
+  int AREA_SIZE = 60;
+  //
+  //ellipse(sourcePoint.x,sourcePoint.y,AREA_SIZE*2,AREA_SIZE*2);
+  //
+  RPoint tangentMedium = new RPoint();
+  //
+  for(float c=0; c<1; c+=.005){
+    // récupère les points de la shape ici chaque 0.5%
+    //
+    RPoint p = typo.getPoint(c);
+    // calcule la distance entre la souris et le point
+    float dist = sourcePoint.dist(p);
+    //
+    // si le point est dans la zone de sensibilité
+    if(dist<AREA_SIZE){
+      // je récupère sa tangente 
+      RPoint t = typo.getTangent(c);
+      // je lui applique une puissance pour filtrer sa distance proche/loin
+      t.scale(pow((AREA_SIZE-dist)/AREA_SIZE,2));
+      // variante avec mouse pressed
+      if(!mousePressed){
+        // le cas normal donc, je fait pointer les tangeante, vers le bas
+        if(t.y<0){
+          t.rotate(PI);
+        }
+      }
+      // j'ajoute la tengeante à la moyenne
+      // add est ici une fontion géométrique (voir RPoint->add)
+     tangentMedium.add(t);
+     //
+     // j'affiche les tangeantes locales
+    //line(p.x,p.y,p.x+t.x,p.y+t.y);
+    }
+
   }
+   //
+   if(tangentMedium.dist(o)>AREA_SIZE){
+     // si la tengeante est trop grande, je la normalise
+     tangentMedium.normalize();
+     tangentMedium.scale(AREA_SIZE);
+   }
+   //line(sourcePoint.x-tangentMedium.x,sourcePoint.y-tangentMedium.y,sourcePoint.x+tangentMedium.x,sourcePoint.y+tangentMedium.y);
+  return tangentMedium;
 }
