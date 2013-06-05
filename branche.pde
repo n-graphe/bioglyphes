@@ -1,276 +1,156 @@
-float maxSpeed(){
-  return fontSize/30;
-}
+//
+ArrayList<Branche> branches = new ArrayList<Branche>();
 
-class branche {
+class Branche{
   //
-  //
-  //
-  // état de "vie ou de mort" de la branche
-  boolean dead = false;
-  // étape constitutive de la branche
-  int t=0;
-  // durée de vie (en étapes) de la branche
-  int lifeTime = 40;
-  // durée de vie (entre 0 et 1) de la branche (time = t/lifetime)
-  float time = 0;
-  //
-  // niveau de la branche, dans la hiérarchie. les branches parentes, initiale ont le niveau 0. leurs enfants 1, en ainsi de suite
+  int life = 0;
+  int lifeTime;
   int level = 0;
-  // le niveau maximum de récursion, 4 = arriere-grand-mère
-  int MAX_LEVEL = 6;
-  // position de la branche
-  RPoint position = new RPoint(0, 0);
-  // velocité, direction, cap, vitesse instantanée, de la branche
-  RPoint velocity = new RPoint(0, 0);
+  int invertLevel = 0;
   //
-  // grappe de points qui seront les points à dessiner, à relier.
-  ArrayList<RPoint> cluster = new ArrayList();
-  // grappe de points qui seront la tangeante locale des points à dessiner, à relier.
-  ArrayList<RPoint> clusterVelocity = new ArrayList();
+  RPoint position;
+  RPoint velocity;
   //
-  // misc -> miscellaneous -> du latin miscellaneus, « choses mêlées »
-  // c’est une constante de "mélange" que j'utilise pour controller l'aspect chaotique ou non, de la vélocité
-  float misc = .04;
-  // variable qui permet de modifier le niveau de chaos dans la forme de la branche
-  float miscLevel = 0;
+  float strokeWeight;
   //
-  float maxSpeed = 2;
+  float misc;
   //
-  // angle de rotation en cas de sortie de la lettre;
-  float returnOutAngle = PI/2;
-  float retourRandom = 1;
-  boolean inside = true;
-  // 
-  float strokeWeight = 0;
+  float circonvolutionSpeed;
+  float circonvolutionDirection;
   //
-  // liste des branches DIRECTEMENT enfantes de la branche actuelle.
-  ArrayList<branche> sub = new ArrayList<branche>();
+  float structureAttraction;
   //
+  Branche parent;
+  ArrayList<Branche> children = new ArrayList<Branche>();
   //
+  ArrayList<RPoint> positions = new ArrayList<RPoint>();
+  ArrayList<RPoint> velocities = new ArrayList<RPoint>();
   //
-  color c;
-  //
-  branche(RPoint start, RPoint startV, int l, color _c) {
-    //
-    //
-    level = l;
-    c = _c;
-    //
-    // établie une durée de vie aléatoire pour chaque branche.
-    lifeTime = level==0? 20 :(int) random(4, 4+level*3);
-    //
-    position = new RPoint(start.x, start.y); // initialise la position initiale
-    cluster.add(new RPoint(position));
-    velocity = new RPoint(startV.x, startV.y); // initialise la vélocité initiale
-    clusterVelocity.add(new RPoint(velocity));
-    //
-    //
-    miscLevel = level==MAX_LEVEL-2?misc*(2+(level)*(level+1))*fontSize/30:misc*(2+(MAX_LEVEL-level)*(level+1))*fontSize/100; // initialise le niveau de "mélange" de la branche, 
-    // en fonction de son niveau dans la hiérarchie
-    // plus une branche est enfante, plus elle est chaotique
-    //
-    strokeWeight = pow((MAX_LEVEL-level+random(1)),3)*fontSize/8000;
-    //
-    maxSpeed = maxSpeed();
-    //
-    returnOutAngle = ((random(1)<.5)?-1:1)*PI/random(1,2+(MAX_LEVEL-level)*4);
-    retourRandom = random(1,30);
-    //
-    // angle de rotation en cas de sortie de la lettre;
+  Branche(){
+    lifeTime=LIFE_TIME;
+    strokeWeight = STROKE_WEIGHT;
+    misc = sqrt(MISC_LEVEL);
+    circonvolutionSpeed = TWO_PI/CIRCONVOLUTION_LEVEL;
+    circonvolutionDirection = random(1)<.5?-1:1;
+    structureAttraction = STRUCTURE_ATTRACTION/fontSize;
+    invertLevel = MAX_LEVEL;
+    invertLevel = MAX_LEVEL-1;
   }
-  boolean draw() {
-    // fonction de dessin, renvoie sont état boolean de "vie"
-    update();   
-    return dead;
+  //
+  // démarre une branche racine (root)
+  //
+  void InitRoot(RPoint startingPosition){
+    position = new RPoint(startingPosition);
+    velocity = new RPoint(0,STARTING_VELOCITY);
+    velocity.rotate(random(0,TWO_PI));
+    parent = this;
+    positions.add(new RPoint(position));
+    velocities.add(new RPoint(velocity));
+    StrokeWeight();
   }
-  void update() {
+  // renvoie l'état "root" de la branche ou non.
+  boolean isRoot(){ return parent == this; }
+  //
+  void StrokeWeight(){
+    strokeWeight = (1+invertLevel)*STROKE_WEIGHT/MAX_LEVEL*800/fontSize;
+  }
+  void InitAsChild(Branche _parent){
+    parent = _parent;
+    position = new RPoint(parent.position);
+    velocity = new RPoint(parent.velocity);
+    level = parent.level+1;
+    invertLevel = MAX_LEVEL-level;
+    positions.add(new RPoint(position));
+    velocities.add(new RPoint(velocity));
+    StrokeWeight();
+  }
+  //
+  boolean Draw(){
+    boolean isDrawing = DrawCurrent();
+    return DrawChildren() || isDrawing;
+  }
+  boolean DrawChildren(){
     //
-    // fonction principale de la branche
+    boolean isChildrenDrawing = false;
+    for(int b=0; b<children.size(); b++){
+      isChildrenDrawing |= children.get(b).Draw();
+    }
+    //
+    return isChildrenDrawing;
+  }
+  boolean DrawCurrent(){
     //
     //
-    if (!dead) {
-      // si la branche n'est pas morte
-      //
-      //
-      // si la branche à des enfants
-      if (sub.size()>0) {
-        //
-        // va tester si toutes ses branches enfantes sont mortes
-        boolean allDead = true;
-        //
-        for (branche b:sub) {
-          // je teste la vie des sous branche en lanceant un draw sur celle-ci,
-          // draw renvoit le "dead" = true, si elle est morte. 
-          // j'ai un peu "compilé" 3 actions en une, ce qui ne facilite pas la lecture.
-          // 
-          allDead &= b.draw();
-          //
-          // plus "lisible" peut-être…
-          // c'est équivalent à :
-          //
-          // b.draw(); // dessine la lettre
-          // allDead = allDead & b.dead; // effectue l'opération booleene
-          //
-        }
-        if (allDead) {
-          // si toutes les branches enfantes sont mortes, alors je considère que la branche est morte.
-          // et je lance le Kill !
-          Kill();
-        }
-        // si la branche est vivante
+    if(life<lifeTime){
+      Iteration();
+      return true;
+    }
+    if(life==lifeTime){
+      life++;
+      if(level<MAX_LEVEL){
+        Divide();
       }
-      else {
-        // j'ajoute un au compteur
-        t++;
-        // je calcule le time (entre 0 et 1)
-        time = (float)t/lifeTime;
-        //
-        // je modifie la vélocité, en fonction du degrée de miscellaneus
-        if (velocity.dist(o)>(maxSpeed)) {
-          velocity.normalize();
-          velocity.scale(maxSpeed);
-        } 
-        velocity.add(new RPoint(random(-miscLevel, miscLevel), random(-miscLevel*(MAX_LEVEL-level)*1/MAX_LEVEL, miscLevel*(1+level/4))));
-        //
-        //     
-        // operations concernant le teste de typo, je les ai laissé en commentaires
-        /*RPoint destination = new RPoint(position);
-         //
-         destination.add(velocity);
-         if(inside && !typo.contains(destination)){
-         while(!typo.contains(destination) && !(random(1)<.05)){
-         destination = new RPoint(position);
-         velocity = new RPoint(random(-1,1),random(-.8,1));
-         destination.add(velocity);
-         }
-         }*/
-        //
-        RPoint destination = new RPoint(position);
-        //
-        inside = typo.contains(destination);
-        if ( !inside ) {
-          
-          velocity.rotate(returnOutAngle/random(1,retourRandom));       
+      DrawCluster();
+    }
+    return false;
+  }
+  void Iteration(){
+    //
+    if(debug){
+     // ellipse(position.x,position.y,strokeWeight,strokeWeight);
+    }
+    //
+    //
+    //
+    //
+    //
+    RPoint natTg = NaturalTangent(position);
+    natTg.scale(structureAttraction);
+    stroke(0,100);
+    //
+    velocity.add(natTg);
+    velocity.rotate(random(-PI,PI)/misc+circonvolutionDirection*circonvolutionSpeed);
+    if(velocity.dist(o)>MAX_VELOCITY){
+      velocity.normalize();
+      velocity.scale(MAX_VELOCITY);
+    }
+    
+    velocities.add(new RPoint(velocity));
+    
+    position.add(velocity);
+    //
+    positions.add(new RPoint(position));
 
-        }
-        if(level<3){
-          
-          RPoint naturalT = new RPoint(NaturalTangent(position));
-          naturalT.normalize();
-          naturalT.scale(velocity.dist(o));
-          velocity.add(naturalT);
-          
-          if (velocity.dist(o)>(maxSpeed)) {
-            velocity.normalize();
-            velocity.scale(maxSpeed);
-          } 
-
-        }
-        //
-        // ajoute la vélocité (le déplacement, c'est un vecteur) à la position.
-        // add est une opération du plan de "translation"
-        // ça équivaut à 
-        // position.x += velocity.x; 
-        // position.y += velocity.y; 
-        position.add(velocity);
-        // test de typo
-        //inside = typo.contains(position);
-        //
-        // ajoute la nouvelle position au cluster
-        cluster.add(new RPoint(position));
-        clusterVelocity.add(new RPoint(velocity));
-        // avant je dessinait des éllipses au lieu de l'ajouter au cluster
-        ///*
-        if(debug){
-          noStroke();
-          fill(c);
-          ellipse(position.x, position.y, strokeWeight, strokeWeight);
-        }
-        //*/
-        //
-        // si le t a dépassé la durée de vie
-        if (t>lifeTime) {
-          // si le niveau n'est pas le maximum possible
-          if (level<MAX_LEVEL) {
-            // je dessine le cluster
-            if(!debug){
-              DrawCluster();
-            }
-            // j'ajoute 2 branches enfantes (j'ai fait une boucle for, car on pourrait imaginer ajouter plus de branches)
-            int nbSubBranches = level==0?3:level==MAX_LEVEL-1?(int)random(6):1;
-            for (int q=0; q<=nbSubBranches; q++) {
-              // ajoute UNE sous-branche à la liste
-              sub.add(new branche(position, velocity, level+1, c));
-            }
-          }
-          else {
-            // si on a atteint le niveau maximum je Kill !
-            // 
-            Kill();
-          }
-        }
-      }
+    stroke(255,0,0,50);
+    //line(position.x,position.y,position.x+velocity.x,position.y+velocity.y);
+    //
+    
+    //
+    //
+    //
+    life++;
+    //
+    
+  }
+  void Divide(){
+    for(int i=0; i<MAX_CHILDREN; i++){
+      Branche branche = new Branche();
+      branche.InitAsChild(this);
+      children.add(branche);
     }
   }
-  //
-  //
-  //
-  void DrawCluster() {
-    float sW = strokeWeight;
-    // dessine les deux lignes
-    strokeCap(SQUARE);
-    //DrawClusterWeight(sW*1.4,color(255));
-    strokeCap(ROUND);
-    DrawClusterWeight(sW, c);
-    //
-    strokeCap(SQUARE);
-    //DrawClusterHair(sW);
-  }
-
-  void DrawClusterWeight(float n, color c) {
-    // dessine une ligne à partir des points du cluster
-    stroke(c);
-    strokeWeight(n);
+  void DrawCluster(){
     beginShape();
-    RGroup group = new RGroup();
-    RContour contour = new RContour();
-    contour.setStroke(true);
-    contour.setStroke("#000000");
-    contour.setStrokeWeight(n);
-   contour.addClose();
-   vertex(cluster.get(0).x,cluster.get(0).y);
-   for (int i=0; i<cluster.size();i++) {
-      RPoint p = cluster.get(i);
-      RPoint vp = clusterVelocity.get(i);
-      //vertex(p.x,p.y);
-      quadraticVertex(p.x-vp.x,p.y-vp.y,p.x,p.y);
-      //contour.addPoint(p.x, p.y);
+    RPoint start = positions.get(0);
+    vertex(start.x,start.y);
+    for(int c=1; c<positions.size()-1; c++){
+      RPoint p = positions.get(c);
+      RPoint v = new RPoint(velocities.get(c));
+      vertex(p.x,p.y);      
     }
-    //group.addElement(contour);
-    contour.addClose();
-    //contour.draw();
-    rendu.addElement(contour);
+    strokeWeight(strokeWeight);
+    stroke(0);
+    noFill();
     endShape();
   }
-  
-  void DrawClusterHair(float sw){
-    if(level<2){
-       for (int i=0; i<cluster.size();i++) {
-        RPoint p = cluster.get(i);
-        RPoint vp = new RPoint(clusterVelocity.get(i));
-        vp.rotate((random(1)<.5?1:-1)*PI/2);
-        vp.rotate(random(-PI/3,PI/3));
-        strokeWeight(sw/random(3,9));
-        float sww = random(2)+sw;
-        stroke(0);
-        line(p.x,p.y,p.x+vp.x*sw/6,p.y+vp.y*sw/6);
-       }
-    }
-  }
-
-  void Kill() {
-    dead = true;
-  }
 }
-
