@@ -1,5 +1,6 @@
 //
 ArrayList<Branche> branches = new ArrayList<Branche>();
+ArrayList<Branche> clusters = new ArrayList<Branche>();
 
 class Branche{
   //
@@ -7,6 +8,8 @@ class Branche{
   int lifeTime;
   int level = 0;
   int invertLevel = 0;
+  //
+  boolean free = false;
   //
   RPoint position;
   RPoint velocity;
@@ -24,7 +27,10 @@ class Branche{
   ArrayList<Branche> children = new ArrayList<Branche>();
   //
   ArrayList<RPoint> positions = new ArrayList<RPoint>();
+  ArrayList<RPoint> internalVibrations = new ArrayList<RPoint>();
   ArrayList<RPoint> velocities = new ArrayList<RPoint>();
+  //
+  color strokeColor = color(0);
   //
   Branche(){
     lifeTime=LIFE_TIME;
@@ -39,25 +45,34 @@ class Branche{
   //
   // démarre une branche racine (root)
   //
-  void InitRoot(RPoint startingPosition){
+  void InitRoot(RPoint startingPosition, RPoint startingTangent){
     position = new RPoint(startingPosition);
-    velocity = new RPoint(0,STARTING_VELOCITY);
-    velocity.rotate(random(0,TWO_PI));
+    velocity = new RPoint(startingTangent);
+    /*if(startingTangent.dist()>MAX_VELOCITY){
+      startingTangent.normalize()
+    }*/
+    //velocity.rotate(random(0,TWO_PI));
     parent = this;
     positions.add(new RPoint(position));
     velocities.add(new RPoint(velocity));
     StrokeWeight();
+    strokeColor = color(GREY_LEVEL,ALPHA_LEVEL);
   }
   // renvoie l'état "root" de la branche ou non.
   boolean isRoot(){ return parent == this; }
   //
   void StrokeWeight(){
+    //
+    //
     strokeWeight = (1+invertLevel)*STROKE_WEIGHT/MAX_LEVEL*800/fontSize;
+    //
+    //
   }
   void InitAsChild(Branche _parent){
     parent = _parent;
     position = new RPoint(parent.position);
     velocity = new RPoint(parent.velocity);
+    strokeColor = parent.strokeColor;
     level = parent.level+1;
     invertLevel = MAX_LEVEL-level;
     positions.add(new RPoint(position));
@@ -83,6 +98,7 @@ class Branche{
     //
     if(life<lifeTime){
       Iteration();
+      TryAddFreeChildren();
       return true;
     }
     if(life==lifeTime){
@@ -90,15 +106,39 @@ class Branche{
       if(level<MAX_LEVEL){
         Divide();
       }
-      DrawCluster();
+      clusters.add(this);
     }
     return false;
   }
+  //
+  //
+  //
+  // kill everything, every child
+  //
+  void StopPropagation(){
+    life=lifeTime+1;
+    clusters.add(this);
+    //
+    for(int b=0; b<children.size(); b++){
+      children.get(b).StopPropagation();
+    }
+  }
+  //
+  //
+  //
+  //
+  //
+  //
+  //  ajoute une mini branche libre
+  //
+  //
+  void TryAddFreeChildren(){
+  }
+  //
+  //
+  //
   void Iteration(){
     //
-    if(debug){
-     // ellipse(position.x,position.y,strokeWeight,strokeWeight);
-    }
     //
     //
     //
@@ -106,7 +146,7 @@ class Branche{
     //
     RPoint natTg = NaturalTangent(position);
     natTg.scale(structureAttraction);
-    stroke(0,100);
+    //
     //
     velocity.add(natTg);
     velocity.rotate(random(-PI,PI)/misc+circonvolutionDirection*circonvolutionSpeed);
@@ -114,14 +154,26 @@ class Branche{
       velocity.normalize();
       velocity.scale(MAX_VELOCITY);
     }
+    //
+    
+    //
+    RPoint internalVibration = new RPoint(velocity);
+    internalVibration.rotate(random(1)<.5?PI/2:-PI/2);
+    internalVibration.normalize();
+    internalVibration.scale(random(INTERNAL_VIBRATION_LEVEL));
+    //
     
     velocities.add(new RPoint(velocity));
+    
+    internalVibrations.add(internalVibration);
     
     position.add(velocity);
     //
     positions.add(new RPoint(position));
 
-    stroke(255,0,0,50);
+    view.fill(strokeColor);
+    view.noStroke();
+    view.ellipse(position.x+internalVibration.x,position.y+internalVibration.y,strokeWeight,strokeWeight);
     //line(position.x,position.y,position.x+velocity.x,position.y+velocity.y);
     //
     
@@ -146,10 +198,12 @@ class Branche{
     for(int c=1; c<positions.size()-1; c++){
       RPoint p = positions.get(c);
       RPoint v = new RPoint(velocities.get(c));
-      vertex(p.x,p.y);      
+      RPoint iv = new RPoint(internalVibrations.get(c));
+      if(c<positions.size()-2){iv = new RPoint();}
+      vertex(p.x+iv.x,p.y+iv.y);      
     }
     strokeWeight(strokeWeight);
-    stroke(0);
+    stroke(strokeColor);
     noFill();
     endShape();
   }

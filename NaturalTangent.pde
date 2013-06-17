@@ -1,7 +1,7 @@
 RPoint NaturalTangent(RPoint sourcePoint){
   //
   // largeur de la zone de sensibilité
-  int AREA_SIZE = 60;
+  float AREA_SIZE = NATURAL_TANGENT_AREA_SIZE;
   //
   //ellipse(sourcePoint.x,sourcePoint.y,AREA_SIZE*2,AREA_SIZE*2);
   //
