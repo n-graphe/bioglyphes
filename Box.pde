@@ -31,7 +31,7 @@ class Box {
     // Let's find the screen position of the particle
     Vec2 pos = box2d.getBodyPixelCoord(body);
     // Is it off the bottom of the screen?
-    if (pos.y > height+w*h || pos.x>width+w*h) {
+    if (pos.y > height+w*h || pos.x>width+w*h || pos.x<0 || pos.y<0) {
       killBody();
       return true;
     }
@@ -85,7 +85,9 @@ class Box {
     body.createFixture(fd);
 
     // Give it some initial random velocity
-    body.setLinearVelocity(new Vec2(0, random(-1,1)));
+    float POWER = 20;
+    float a = random(0,PI*2);
+    body.setLinearVelocity(new Vec2(POWER*cos(a),POWER*sin(a)));
     body.setAngularVelocity(random(-5, 5));
   }
 }

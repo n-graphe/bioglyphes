@@ -34,6 +34,11 @@ void draw(){
 
   fill(0,100);
   if (random(1) < 0.3 && boxes.size()<400) {
+    Box p = new Box(random(0,width),random(100,300));
+    boxes.add(p);
+  }
+  fill(0,100);
+  if (random(1) < 0.3 && boxes.size()<400) {
     Box p = new Box(random(0,width),random(200,300));
     boxes.add(p);
   }
