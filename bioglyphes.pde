@@ -23,6 +23,8 @@ void setup() {
   //setupHexGrid();
   //RG.setPolygonizer(RG.UNIFORMLENGTH);
   //RG.setPolygonizerLength(10);
+  //
+  randomSeed(200);
   for(RShape shape:archi.children){
     livingLetters.add(new LivingLetter(shape));
   }
@@ -55,13 +57,13 @@ void draw() {
   beginShape();
 
   for(LivingLetter letter:livingLetters){
-    for(int i=0; i<50; i++){
+    for(int i=0; i<500; i++){
       letter.Update();
     }
   }
-  for(int i=0; i<5000; i++){
+  /*for(int i=0; i<5000; i++){
       toShape.Update();
-  }
+  }*/
   
   endShape();
   

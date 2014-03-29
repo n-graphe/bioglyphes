@@ -20,8 +20,8 @@ class LivingLetter{
   float speed = random(10);
   float speed2 = random(20);
   void Update(){
-    speed+=.02;
-    speed2+=.022;
+    speed+=.2;
+    speed2+=.5;
     //if(random(1)<.01){speed+=60;}
     RPoint pTarget = points[floor(speed)%points.length];
     RPoint pTarget2 = points[floor(speed2)%points.length];
