@@ -13,7 +13,7 @@ int cellsY = int(h/(unitSize*eqTriH*2+eqTriH));
 ArrayList<RPoint> hexGrid = new ArrayList<RPoint>();
 PGraphics hexGridGraphics ;
 ArrayList<LivingLetter> livingLetters = new ArrayList<LivingLetter>();
-
+LivingLetter toShape;
 
 void setup() {
   size(w, h);
@@ -21,11 +21,12 @@ void setup() {
   background(255);
   archi = RG.loadShape("archi.svg");
   //setupHexGrid();
-  RG.setPolygonizer(RG.UNIFORMLENGTH);
-  RG.setPolygonizerLength(10);
+  //RG.setPolygonizer(RG.UNIFORMLENGTH);
+  //RG.setPolygonizerLength(10);
   for(RShape shape:archi.children){
     livingLetters.add(new LivingLetter(shape));
   }
+  toShape = new LivingLetter(archi);
 }
 
 void setupHexGrid(){
@@ -57,6 +58,9 @@ void draw() {
     for(int i=0; i<50; i++){
       letter.Update();
     }
+  }
+  for(int i=0; i<5000; i++){
+      toShape.Update();
   }
   
   endShape();

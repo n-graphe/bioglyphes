@@ -23,11 +23,11 @@ L’algorithme a été développé  dans l’environnement [Processing](http://p
 
 ## Aperçu
 
-version naturarchi_1
+version naturarchi_3
 
 ![image](preview.png)
 
-## Prérequis et installation
+## Prérequis
 
 - processing 2.0.x
 - Geomerative rev 39
